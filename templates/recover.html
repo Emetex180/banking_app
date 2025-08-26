@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .recovery-container {
+        text-align: center;
+        padding: 60px 30px;
+        background: linear-gradient(135deg, #1f1f1f, #2f2f30);
+        color: #d3e8f1;
+        border-radius: 15px;
+        max-width: 700px;
+        margin: 60px auto;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .recovery-container h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #358a9f;
+    }
+
+    .recovery-container p {
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        line-height: 1.6;
+        color: #d3e8f1;
+    }
+
+    .recovery-btn {
+        padding: 12px 28px;
+        font-size: 16px;
+        border: none;
+        background: #358a9f;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(53,138,159,0.4);
+    }
+
+    .recovery-btn:hover {
+        background: #3e3e3f;
+        color: #d3e8f1;
+        transform: translateY(-3px);
+    }
+</style>
+
+<div class="recovery-container">
+    <h2>Recovery Center</h2>
+    <p>
+        Recovery and Investment Community (RIC)<br>
+        Your Trusted Partner in Crypto Recovery and Profitable Investment
+    </p>
+    <a href="{{ url_for('support') }}" target="_blank">
+        <button class="recovery-btn">NEXT</button>
+    </a>
+</div>
+{% endblock %}

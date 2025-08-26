@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  :root {
+    --primary-color: #4CAF50;   /* Green */
+    --secondary-color: #2C3E50; /* Dark navy */
+    --accent-color: #F39C12;    /* Orange */
+    --background-color: #F5F7FA;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --card-border: #e0e0e0;
+  }
+
+  body {
+    background-color: var(--background-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+  }
+
+  .header-text {
+    text-align: center;
+    margin: 50px 0 30px;
+  }
+
+  .header-text h2 {
+    color: var(--secondary-color);
+    font-weight: 700;
+  }
+
+  .header-text p {
+    color: #666;
+    font-size: 1.1rem;
+  }
+
+  .payment-option {
+    border: 1px solid var(--card-border);
+    border-radius: 15px;
+    background: var(--card-bg);
+    transition: 0.3s ease-in-out;
+  }
+
+  .payment-option:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+
+  .card-img-top {
+    width: 90px;
+    height: 90px;
+    margin: 20px auto 10px;
+  }
+
+  .card-title {
+    font-weight: 600;
+    color: var(--secondary-color);
+  }
+
+  .card-text {
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  .btn-pay {
+    width: 100%;
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 10px;
+    transition: 0.3s;
+  }
+
+  .btn-bitcoin {
+    background: var(--accent-color);
+    border: none;
+    color: #fff;
+  }
+
+  .btn-bitcoin:hover {
+    background: #d68910;
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5);
+  }
+
+  .btn-accountancy {
+    background: var(--primary-color);
+    border: none;
+    color: #fff;
+  }
+
+  .btn-accountancy:hover {
+    background: #3d9140;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.5);
+  }
+
+  .btn-card {
+    background: var(--secondary-color);
+    border: none;
+    color: #fff;
+  }
+
+  .btn-card:hover {
+    background: #1a252f;
+    box-shadow: 0 5px 15px rgba(44, 62, 80, 0.5);
+  }
+  .btn a {
+    text-decoration: none;
+    color: white;
+  }
+</style>
+
+<div class="container">
+  <div class="header-text">
+    <h2>Choose Your Payment Method</h2>
+    <p>Please select one of the payment options below</p>
+  </div>
+
+  <div class="row">
+    <!-- Bitcoin Payment -->
+    <div class="col-md-4 mb-4">
+      <div class="card payment-option">
+        <img src="https://img.icons8.com/color/100/bitcoin--v1.png" class="card-img-top" alt="Bitcoin">
+        <div class="card-body text-center">
+          <h5 class="card-title">Bitcoin Machine</h5>
+          <p class="card-text">Pay using Bitcoin via our integrated crypto gateway.</p>
+          <button class="btn btn-bitcoin btn-pay"><a href="https://t.me/crytoxcom"> Pay with Bitcoin</a></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accountancy Department -->
+    <div class="col-md-4 mb-4">
+      <div class="card payment-option">
+        <img src="https://img.icons8.com/color/100/accounting.png" class="card-img-top" alt="Accountancy">
+        <div class="card-body text-center">
+          <h5 class="card-title">Accountancy Department</h5>
+          <p class="card-text">Make direct payment through our Accountancy Department.</p>
+          <button class="btn btn-accountancy btn-pay"><a href="https://t.me/crytoxcom">Pay Now</a></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Payment -->
+    <div class="col-md-4 mb-4">
+      <div class="card payment-option">
+        <img src="https://img.icons8.com/color/100/bank-card-front-side.png" class="card-img-top" alt="Card Payment">
+        <div class="card-body text-center">
+          <h5 class="card-title">Card Payment</h5>
+          <p class="card-text">Secure payment using your debit or credit card.</p>
+          <button class="btn btn-card btn-pay"><a href="https://changelly.com/">Pay with Card</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,244 @@
+<div class="crypto-widget" id="crypto-widget">
+  <div class="crypto-controls">
+    <button class="crypto-btn" id="prev">◀</button>
+    <button class="crypto-btn" id="next">▶</button>
+    <button class="crypto-btn" id="pause">Pause</button>
+    <span class="crypto-update">Updated every <span id="interval">30</span>s</span>
+  </div>
+
+  <div class="crypto-carousel-wrap">
+    <div class="crypto-carousel" id="carousel"></div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --bg-dark: rgba(0, 0, 0, 0.8);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --muted: #ccc;
+    --positive: #16a34a;
+    --negative: #ef4444;
+  }
+
+  .crypto-widget {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-dark);
+    color: #fff;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .crypto-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .crypto-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .crypto-btn:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .crypto-update {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 8px;
+  }
+
+  .crypto-carousel-wrap {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .crypto-carousel {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    transition: transform 0.35s ease;
+    will-change: transform;
+  }
+
+  .crypto-card {
+    flex: 0 0 auto;
+    min-width: 200px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .crypto-rank {
+    font-size: 12px;
+    color: var(--muted);
+    width: 26px;
+    text-align: center;
+  }
+
+  .crypto-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .crypto-meta {
+    flex: 1;
+  }
+
+  .crypto-name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .crypto-symbol {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .crypto-price {
+    font-weight: 700;
+    font-size: 14px;
+    text-align: right;
+  }
+
+  .crypto-change {
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .positive {
+    color: var(--positive);
+  }
+
+  .negative {
+    color: var(--negative);
+  }
+</style>
+
+<script>
+const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h';
+const UPDATE_INTERVAL = 30000;
+const AUTO_SCROLL_STEP = 1;
+const AUTO_SCROLL_TICK = 16;
+
+let coins = [];
+let paused = false;
+let autoScrollPos = 0;
+let autoScrollTimer = null;
+let updateTimer = null;
+
+const carouselEl = document.getElementById('carousel');
+const pauseBtn = document.getElementById('pause');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+document.getElementById('interval').textContent = (UPDATE_INTERVAL/1000).toString();
+
+async function fetchCoins(){
+  try{
+    const res = await fetch(API_URL);
+    if(!res.ok) throw new Error('API error '+res.status);
+    coins = await res.json();
+    renderCarousel();
+  }catch(err){
+    console.error('Failed to load coin data', err);
+    carouselEl.innerHTML = '<div style="padding:12px;color:var(--muted)">Failed to load data.</div>';
+  }
+}
+
+function createCard(c){
+  const card = document.createElement('div');
+  card.className = 'crypto-card';
+
+  const rank = document.createElement('div'); rank.className='crypto-rank'; rank.textContent = '#'+c.market_cap_rank;
+  const logo = document.createElement('img'); logo.className='crypto-logo'; logo.src = c.image; logo.alt = c.name;
+
+  const meta = document.createElement('div'); meta.className='crypto-meta';
+  const name = document.createElement('div'); name.className='crypto-name'; name.textContent = c.name;
+  const sym = document.createElement('div'); sym.className='crypto-symbol'; sym.textContent = c.symbol;
+  meta.appendChild(name); meta.appendChild(sym);
+
+  const priceWrap = document.createElement('div');
+  const price = document.createElement('div'); price.className='crypto-price'; price.textContent = formatPrice(c.current_price);
+  const change = document.createElement('div'); change.className='crypto-change';
+  const ch = (c.price_change_percentage_24h ?? 0);
+  change.textContent = (ch>=0?'+':'') + ch.toFixed(2) + '%';
+  change.classList.add(ch>=0? 'positive' : 'negative');
+
+  priceWrap.appendChild(price);
+  priceWrap.appendChild(change);
+
+  card.appendChild(rank);
+  card.appendChild(logo);
+  card.appendChild(meta);
+  card.appendChild(priceWrap);
+
+  return card;
+}
+
+function formatPrice(v){
+  if(v == null) return '—';
+  if(v >= 1) return '$' + Number(v).toLocaleString(undefined, {maximumFractionDigits:2});
+  return '$' + Number(v).toPrecision(4);
+}
+
+function renderCarousel(){
+  carouselEl.innerHTML = '';
+  if(!coins.length) return;
+  coins.forEach(c => carouselEl.appendChild(createCard(c)));
+  coins.forEach(c => carouselEl.appendChild(createCard(c))); // duplicate for loop effect
+}
+
+function startAutoScroll(){
+  if(autoScrollTimer) clearInterval(autoScrollTimer);
+  autoScrollTimer = setInterval(()=>{
+    if(paused) return;
+    autoScrollPos += AUTO_SCROLL_STEP;
+    const halfWidth = carouselEl.scrollWidth / 2;
+    if(autoScrollPos >= halfWidth) autoScrollPos = 0;
+    carouselEl.style.transform = `translateX(${-autoScrollPos}px)`;
+  }, AUTO_SCROLL_TICK);
+}
+
+prevBtn.addEventListener('click', ()=>{
+  paused = true; pauseBtn.textContent = 'Resume';
+  carouselEl.scrollBy({left:-220,behavior:'smooth'});
+});
+nextBtn.addEventListener('click', ()=>{
+  paused = true; pauseBtn.textContent = 'Resume';
+  carouselEl.scrollBy({left:220,behavior:'smooth'});
+});
+pauseBtn.addEventListener('click', ()=>{
+  paused = !paused;
+  pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+});
+
+function scheduleUpdates(){
+  if(updateTimer) clearInterval(updateTimer);
+  updateTimer = setInterval(fetchCoins, UPDATE_INTERVAL);
+}
+
+(async function init(){
+  await fetchCoins();
+  startAutoScroll();
+  scheduleUpdates();
+})();
+</script>

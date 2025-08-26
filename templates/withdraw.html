@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .dashboard {
+        padding: 40px 20px;
+        min-height: 80vh;
+        background: linear-gradient(135deg, #1e1e1f, #2b2b2d);
+        font-family: 'Segoe UI', sans-serif;
+        color: #d3e8f1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .withdraw-card {
+        width: 100%;
+        max-width: 600px;
+        padding: 35px 30px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #358a9f, #4fc3dc);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.7s ease-in-out;
+    }
+
+    .withdraw-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.55);
+    }
+
+    .withdraw-card h4 {
+        margin-bottom: 25px;
+        font-weight: 700;
+        text-align: center;
+        color: #fff;
+    }
+
+    .withdraw-card p {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .withdraw-card .form-label {
+        color: #000;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .withdraw-card .form-control {
+        border-radius: 12px;
+        border: none;
+        padding: 14px;
+        background-color: rgba(255,255,255,0.15);
+        color: #fff;
+        font-size: 1rem;
+        transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    /* ✅ make placeholder text visible */
+    .withdraw-card .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 400;
+    }
+
+    .withdraw-card .form-control:focus {
+        background-color: rgba(255,255,255,0.25);
+        box-shadow: 0 0 10px rgba(79, 195, 220, 0.7);
+        outline: none;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .withdraw-card .btn {
+        background: linear-gradient(135deg, #4fc3dc, #358a9f);
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #fff;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+    .withdraw-card .btn:hover {
+        background: linear-gradient(135deg, #358a9f, #276873);
+        box-shadow: 0 6px 15px rgba(53, 138, 159, 0.5);
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="dashboard">
+    <div class="withdraw-card">
+        <h4>💸 Withdrawal Section</h4>
+        <p>
+            <strong>GRB</strong>, please provide your withdrawal details below.
+        </p>
+        
+        <form action="{{ url_for('withdraw') }}" method="post">
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="account_number" class="form-label">Account Number</label>
+                <input type="text" class="form-control" id="account_number" name="account_number" placeholder="Enter your account number" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="bank_name" class="form-label">Bank Name</label>
+                <input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="Enter your bank name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="amount" class="form-label">Withdrawal Amount</label>
+                <input type="number" class="form-control" id="amount" name="amount" placeholder="e.g. 500" required>
+            </div>
+            
+            <button type="submit" class="btn w-100 fw-bold">Proceed to Next Page</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

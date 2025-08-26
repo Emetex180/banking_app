@@ -1,0 +1,7 @@
+:root {
+  --primary-color: #4CAF50;   /* Example green */
+  --secondary-color: #2C3E50; /* Example dark */
+  --accent-color: #F39C12;    /* Example orange */
+  --background-color: #F5F7FA;
+  --text-color: #333333;
+}

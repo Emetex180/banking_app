@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #d3e8f1, #e0f0f7);
+    padding: 50px 20px;
+    color: #fff;
+  }
+
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #2f2f30;
+    padding: 35px 30px;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  h2 {
+    margin-bottom: 25px;
+    color: #4fc3dc;
+    font-weight: bold;
+  }
+
+  /* Loader */
+  .idle-loader {
+    margin: 0 auto 20px auto;
+    border: 8px solid #d3e8f1;
+    border-top: 8px solid #358a9f;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Progress bar */
+  .progress-container {
+    height: 10px;
+    background: #d3e8f1;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+
+  .progress-bar {
+    height: 10px;
+    width: 0;
+    background: linear-gradient(90deg, #4fc3dc, #358a9f);
+    transition: width 0.6s ease;
+  }
+
+  /* Timeline steps */
+  .timeline {
+    position: relative;
+    margin: 40px 0;
+    padding-left: 30px;
+    text-align: left;
+  }
+
+  .step {
+    position: relative;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .step.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    width: 15px;
+    height: 15px;
+    background: #358a9f;
+    border-radius: 50%;
+    border: 3px solid white;
+    z-index: 1;
+    box-shadow: 0 0 0 3px #358a9f44;
+  }
+
+  .step.failed::before {
+    background: #ff4c4c;
+    box-shadow: 0 0 0 3px #ff4c4c99;
+  }
+
+  .step span {
+    font-size: 16px;
+    margin-left: 10px;
+    font-weight: 500;
+    color: #d3e8f1;
+  }
+
+  .line {
+    position: absolute;
+    width: 3px;
+    background: #358a9f;
+    top: 15px;
+    bottom: -35px;
+    left: -14px;
+    z-index: 0;
+  }
+
+  .step:last-child .line {
+    display: none;
+  }
+
+  /* Spinner for processing */
+  .spinner {
+    border: 3px solid #d3e8f1;
+    border-top: 3px solid #358a9f;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    margin-left: 8px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #4fc3dc, #358a9f);
+    color: white;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+    width: 100%;
+  }
+
+  .btn:hover {
+    background: linear-gradient(90deg, #358a9f, #276873);
+    transform: translateY(-2px);
+  }
+
+  /* Support section */
+  #support-section {
+    margin-top: 30px;
+    display: none;
+    text-align: center;
+  }
+
+  #support-section p {
+    color: #ff4c4c;
+    font-weight: bold;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  @keyframes shake {
+    0%, 100% {transform: translateX(0);}
+    20%, 60% {transform: translateX(-5px);}
+    40%, 80% {transform: translateX(5px);}
+  }
+
+  .failed.active {
+    animation: shake 0.5s ease-in-out;
+  }
+</style>
+
+<div class="container">
+  <h2>Withdrawal Status</h2>
+
+  <div class="idle-loader" id="idle-loader"></div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <button class="btn" onclick="startWithdrawal()">Start Withdrawal</button>
+
+  <div class="timeline">
+    <div class="step" id="step1">
+      <div class="line"></div>
+      <span>Withdrawal Started</span>
+    </div>
+    <div class="step" id="step2">
+      <div class="line"></div>
+      <span>Processing <span class="spinner" id="spinner" style="display:none;"></span></span>
+    </div>
+    <div class="step failed" id="step3">
+      <span id="final-status">Failed ❌</span>
+    </div>
+  </div>
+
+  <div id="support-section">
+    <p>If you have any difficulties in your withdrawal, please kindly reach out to the support, 
+
+there may be an outstanding fee that needs to be settled before your withdrawal can proceed.</p>
+    <a href="https://t.me/crytoxcom" target="_blank">
+      <button class="btn">Contact Support</button>
+    </a>
+  </div>
+</div>
+
+<script>
+  function startWithdrawal() {
+    const loader = document.getElementById('idle-loader');
+    const steps = [
+      document.getElementById('step1'),
+      document.getElementById('step2'),
+      document.getElementById('step3')
+    ];
+    const progressBar = document.getElementById('progress-bar');
+    const spinner = document.getElementById('spinner');
+    const supportSection = document.getElementById('support-section');
+
+    loader.style.display = 'none';
+    steps.forEach(step => step.classList.remove('active', 'failed', 'success'));
+    steps[2].classList.add('failed');
+    progressBar.style.width = '0';
+    spinner.style.display = 'none';
+    supportSection.style.display = 'none';
+
+    let current = 0;
+
+    function showStep() {
+      if (current < steps.length) {
+        steps[current].classList.add('active');
+        progressBar.style.width = `${((current + 3) / steps.length) * 100}%`;
+
+        if (current === 1) spinner.style.display = 'inline-block';
+
+        current++;
+        setTimeout(showStep, 10000);
+      } else {
+        spinner.style.display = 'none';
+        supportSection.style.display = 'block';
+        supportSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    showStep();
+  }
+</script>
+{% endblock %}

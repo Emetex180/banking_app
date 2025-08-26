@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" 
+             style="min-height: 100vh; background: #2f2f30;">
+            <div class="position-sticky pt-3">
+                <div class="d-flex justify-content-center align-items-center my-4">
+    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
+         alt="Logo" 
+         style="height: 100px;border-radius: 25px;">
+</div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('page_404') }}">🏠 Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="https://t.me/crytoxcom">💰 Deposit</a>
+                        
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('withdraw') }}">💸 Withdraw</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('page_404') }}">📜 Transactions</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+
+            <h2 class="mb-4" style="color: #1f1f1f;">Welcome, {{ username }}</h2>
+
+            <!-- Wallet Balance Card -->
+            <div class="card mb-4 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-body text-center" 
+                     style="background: linear-gradient(135deg, #358a9f, #2f2f30); color: white;">
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 50%;">
+                            <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title mb-1" style="font-weight: 300;">Wallet Balance</h5>
+                    <h1 class="fw-bold">${{ balance }}</h1>
+                    <p class="mb-0" style="font-size: 14px; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 12px; border-radius: 10px;">
+                        Currency: <strong>{{ currency }}</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col">
+                    <a href="{{ url_for('payment') }}" 
+                       class="btn w-100 text-white" 
+                       style="background-color: #358a9f;">Deposit</a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('withdraw') }}" 
+                       class="btn w-100 text-white" 
+                       style="background-color: #3e3e3f;">Withdraw</a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('page_404') }}" 
+                       class="btn w-100 text-white" 
+                       style="background-color: #1f1f1f;">Transfer</a>
+                </div>
+            </div>
+
+            <!-- Spending Chart -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 style="color: #2f2f30;">Spending Overview</h5>
+                    <canvas id="spendingChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- Transaction Table -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 style="color: #2f2f30;">Recent Transactions</h5>
+                    {% if transactions %}
+                    <table class="table mt-3" style="background-color: #d3e8f1; color: #1f1f1f;">
+                        <thead style="background-color: #358a9f; color: white;">
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr>
+                                <td>{{ tx.date }}</td>
+                                <td>{{ tx.type }}</td>
+                                <td>${{ tx.amount }}</td>
+                                <td>{{ tx.status }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted">No transactions found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    const spendingChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Expenses',
+                data: [500, 300, 400, 700, 200, 600],
+                borderColor: '#3e3e3f',
+                backgroundColor: 'rgba(62,62,63,0.2)',
+                tension: 0.4
+            }, {
+                label: 'Deposits',
+                data: [700, 500, 600, 800, 400, 900],
+                borderColor: '#358a9f',
+                backgroundColor: 'rgba(53,138,159,0.2)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+</script>
+{% endblock %}

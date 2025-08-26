@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .register-card {
+    max-width: 500px;
+    width: 100%;
+    background: #4fc3dc;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    padding: 35px 30px;
+    margin: 50px auto;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .register-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 6px;
+  }
+
+  .form-control {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    color: #333;
+    padding: 12px;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+
+  .form-control:focus {
+    background-color: #fff;
+    border-color: #4fc3dc;
+    box-shadow: 0 0 8px rgba(79, 195, 220, 0.5);
+    outline: none;
+  }
+
+  .form-control::placeholder {
+    color: #888;
+  }
+
+  .toggle-icon {
+    cursor: pointer;
+    right: 15px;
+    top: 68%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: #555;
+  }
+
+  .btn-custom {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #4fc3dc, #3498db);
+    border: none;
+    color: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+    width: 100%;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #3498db, #2c80b4);
+    box-shadow: 0 6px 15px rgba(53, 138, 159, 0.3);
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 18px;
+    color: #555;
+  }
+
+  .login-link a {
+    color: #3498db;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="register-card">
+  <div class="d-flex justify-content-center align-items-center my-4">
+    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
+         alt="Logo" 
+         style="height: 100px; background-color: black; border-radius: 25px;">
+</div>
+
+  <h2>Create Account</h2>
+  <form method="post">
+    <!-- Username -->
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input name="username" id="username" class="form-control" placeholder="Choose a username" required>
+    </div>
+
+    <!-- Password with eye toggle -->
+    <div class="mb-3 position-relative">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" name="password" id="password" class="form-control pe-5" placeholder="Enter a strong password" required>
+      <i class="bi bi-eye position-absolute toggle-icon" id="togglePassword"></i>
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-3">
+      <label for="first_name" class="form-label">First Name</label>
+      <input name="first_name" id="first_name" class="form-control" placeholder="Your first name" required>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-3">
+      <label for="last_name" class="form-label">Last Name</label>
+      <input name="last_name" id="last_name" class="form-control" placeholder="Your last name" required>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input name="email" id="email" type="email" class="form-control" placeholder="example@email.com" required>
+    </div>
+
+    <!-- Phone -->
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input name="phone" id="phone" class="form-control" placeholder="e.g. +123456789" required>
+    </div>
+
+    <!-- Address -->
+    <div class="mb-3">
+      <label for="address" class="form-label">Address</label>
+      <input name="address" id="address" class="form-control" placeholder="Your address" required>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn-custom">Register</button>
+  </form>
+
+  <!-- Login link -->
+  <p class="login-link">Already have an account? <a href="/login">Login</a></p>
+</div>
+
+<!-- Password Toggle Script -->
+<script>
+  const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#password');
+
+  togglePassword.addEventListener('click', () => {
+    const type = password.type === 'password' ? 'text' : 'password';
+    password.type = type;
+    togglePassword.classList.toggle('bi-eye');
+    togglePassword.classList.toggle('bi-eye-slash');
+  });
+</script>
+{% endblock %}

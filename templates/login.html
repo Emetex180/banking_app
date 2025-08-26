@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(135deg, #1e1e1f, #2b2b2d);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .login-card {
+    max-width: 400px;
+    width: 100%;
+    background: #2f2f30;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .login-card h2 {
+    color: #4fc3dc;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .form-label {
+    color:#2f2f30 ;
+    font-weight: 500;
+  } 
+
+  .form-control {
+    background-color: #3e3e3f;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    transition: 0.3s;
+  }
+
+  .form-control:focus {
+    background-color: #464647;
+    box-shadow: 0 0 8px rgba(79, 195, 220, 0.7);
+  }
+
+  .toggle-icon {
+    cursor: pointer;
+    right: 15px;
+    top: 68%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: #d3e8f1;
+  }
+
+  .btn-custom {
+    background: linear-gradient(135deg, #4fc3dc, #358a9f);
+    border: none;
+    color: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #358a9f, #276873);
+    box-shadow: 0 6px 15px rgba(53, 138, 159, 0.5);
+  }
+
+  .register-link {
+    color: #d3e8f1;
+  }
+
+  .register-link a {
+    color: #4fc3dc;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .register-link a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;background-color: #4fc3dc;">
+  
+  <div class="login-card p-4">
+    <div class="d-flex justify-content-center align-items-center my-4">
+    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
+         alt="Logo" 
+         style="height: 110px; border-radius: 25px;">
+</div>
+
+    <h2>Login</h2>
+    
+
+    <form method="post">
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input name="username" id="username" type="text" class="form-control" placeholder="Enter your username" required>
+      </div>
+
+      <!-- Password with eye toggle -->
+      <div class="mb-3 position-relative">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" id="password" class="form-control pe-5" placeholder="Enter your password" required>
+        <i class="bi bi-eye position-absolute toggle-icon" id="togglePassword"></i>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-custom w-100 shadow-sm">Login</button>
+    </form>
+
+    <!-- Register link -->
+    <p class="text-center mt-3 register-link">
+      Don't have an account? <a href="/register">Register</a>
+    </p>
+  </div>
+</div>
+
+<!-- Password Toggle Script -->
+<script>
+  const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#password');
+
+  togglePassword.addEventListener('click', () => {
+    const type = password.type === 'password' ? 'text' : 'password';
+    password.type = type;
+    togglePassword.classList.toggle('bi-eye');
+    togglePassword.classList.toggle('bi-eye-slash');
+  });
+</script>
+{% endblock %}
