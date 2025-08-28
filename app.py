@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 from flask_mail import Mail, Message
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+# ----------------- Database Path -----------------
+DB_PATH = "/tmp/database.db" if os.environ.get("RENDER") else "database.db"
+
 # ----------------- Database Setup -----------------
 def init_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -28,19 +32,22 @@ def init_db():
 init_db()
 
 # ----------------- Mail Config (Namecheap Private Email) -----------------
-app.config['MAIL_SERVER'] = 'mail.privateemail.com'  # ✅ Namecheap SMTP
+app.config['MAIL_SERVER'] = 'mail.privateemail.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True   # ✅ TLS on 587
+app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'info@globalriseblockchain.online'
-app.config['MAIL_PASSWORD'] = 'fZN2hhQA@U*=.MP'  # ⚠️ Move this into .env for security
+app.config['MAIL_PASSWORD'] = 'fZN2hhQA@U*=.MP'  # ⚠️ Use environment var on Render
 app.config['MAIL_DEFAULT_SENDER'] = ('Global Rise Blockchain', 'info@globalriseblockchain.online')
 
-mail = Mail(app)
+try:
+    mail = Mail(app)
+except Exception as e:
+    print("⚠️ Mail setup failed:", e)
 
 # ----------------- Helper -----------------
 def get_user(username):
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = c.fetchone()
@@ -109,7 +116,7 @@ def register():
             return 'Username "admin" is reserved.'
 
         try:
-            conn = sqlite3.connect('database.db')
+            conn = sqlite3.connect(DB_PATH)
             c = conn.cursor()
             c.execute('''
                 INSERT INTO users 
@@ -119,8 +126,8 @@ def register():
             conn.commit()
             conn.close()
             return redirect('/login')
-        except:
-            return 'User already exists or error occurred.'
+        except Exception as e:
+            return f'User already exists or error occurred: {str(e)}'
 
     return render_template('register.html')
 
@@ -134,7 +141,6 @@ def dashboard():
     return render_template('dashboard.html', username=user[1], balance=user[8])
 
 # ----------------- Withdraw -----------------
-# ----------------- Withdraw -----------------
 @app.route('/withdraw', methods=["GET", "POST"])
 def withdraw():
     if 'user' not in session or session['user'] == 'admin':
@@ -145,55 +151,40 @@ def withdraw():
         account_number = request.form.get("account_number")
         bank_name = request.form.get("bank_name")
         amount = request.form.get("amount")
-        user_email = request.form.get("email")  # ✅ Now coming from form
+        user_email = request.form.get("email")
 
-        # ✅ Validate email
         if not user_email or "@" not in user_email:
             return "❌ Invalid email address. Please enter a valid email."
 
-        # --- Send mail to Admin ---
         try:
             admin_msg = Message(
                 subject="🔔 New Withdrawal Request",
-                recipients=["benefactoredoho@gmail.com"],  # Admin inbox
+                recipients=["benefactoredoho@gmail.com"],
                 body=f"""
-Dear Admin,
-
-A new withdrawal request has been submitted.
+New withdrawal request:
 
 • Name: {fullname}
 • Email: {user_email}
 • Account Number: {account_number}
 • Bank Name: {bank_name}
 • Amount: {amount}
-
-Please review and process this request promptly.
-
-Regards,
-Global Rise Blockchain System
 """
             )
             mail.send(admin_msg)
 
-            # --- Send confirmation to User ---
             user_msg = Message(
                 subject="✅ Withdrawal Request Received",
                 recipients=[user_email],
                 body=f"""
 Dear {fullname},
 
-We have received your withdrawal request with the following details:
+We have received your withdrawal request:
 
 • Account Number: {account_number}
 • Bank Name: {bank_name}
 • Amount: {amount}
 
-Our team is reviewing your request.
-You will be notified once the transaction has been processed.
-
-Best regards,  
-Support Team  
-Global Rise Blockchain
+We will process it shortly.
 """
             )
             mail.send(user_msg)
@@ -211,7 +202,7 @@ def admin():
     if session.get('user') != 'admin':
         return redirect('/login')
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -237,6 +228,5 @@ def next():
     return render_template('next.html')
 
 # ----------------- Run -----------------
-# Only run this block when running locally
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
