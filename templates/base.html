@@ -11,24 +11,24 @@
 
     <link rel="stylesheet" href="/static/style.css">
 
-
-     <!-- Favicon links -->
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-  <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- Favicon links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body style="background-color: #d3e8f1; color: #2f2f30;">
 {% include "translator.html" %}
+
 <header>
     <nav class="navbar navbar-expand-lg" style="background: linear-gradient(90deg, #358a9f, #2f2f30);">
         <div class="container-fluid">
 
             <!-- Brand -->
-            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center text-white" href="#">
-                <img src="{{ url_for('static', filename='GB LOGO.png') }}" alt="Logo" style="height: 100px;">
-                Global Rise Blockchain
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center text-white" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='GB LOGO.png') }}" alt="Logo" style="height: 80px;">
+                <span class="ms-2">Global Rise Blockchain</span>
             </a>
 
             <!-- Hamburger button -->
@@ -39,19 +39,29 @@
             <!-- Menu -->
             <div class="collapse navbar-collapse" id="navbarMenu">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <!-- Public Links -->
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('home') }}"><i class="bi bi-house-door"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('register') }}"><i class="bi bi-person-plus"></i> Register</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('payment') }}"><i class="bi bi-credit-card"></i> Payment</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('404') }}"><i class="bi bi-exclamation-triangle"></i> Error Page</a></li>
+
                     {% if session['user'] %}
+                        <!-- Dashboard for logged-in users -->
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+
                         <!-- Welcome Message -->
-                        <li class="nav-item me-4">
+                        <li class="nav-item me-3">
                             <span class="text-white fw-semibold d-flex align-items-center">
                                 <i class="bi bi-person-circle me-2 fs-5"></i> 
-                                Welcome, <span class="ms-1" style="text-transform: capitalize;">{{ session['user'] }}</span>
+                                Welcome, <span class="ms-1 text-capitalize">{{ session['user'] }}</span>
                             </span>
                         </li>
 
                         <!-- Logout Button -->
                         <li class="nav-item">
-                            <a href="{{ url_for('logout') }}" class="btn fw-semibold text-white" 
-                               style="background-color: #3e3e3f; border: none;">
+                            <a href="{{ url_for('logout') }}" class="btn fw-semibold text-white px-3" style="background-color: #3e3e3f; border: none;">
                                 <i class="bi bi-box-arrow-right me-1"></i> Logout
                             </a>
                         </li>
