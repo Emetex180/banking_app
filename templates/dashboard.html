@@ -4,110 +4,107 @@
 <div class="container-fluid">
     <div class="row">
 
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" 
-             style="min-height: 100vh; background: #2f2f30;">
+        <!-- Sidebar (offcanvas for mobile, static for desktop) -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark text-white">
             <div class="position-sticky pt-3">
                 <div class="d-flex justify-content-center align-items-center my-4">
-    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
-         alt="Logo" 
-         style="height: 100px;border-radius: 25px;">
-</div>
-                
+                    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
+                         alt="Logo" 
+                         style="height: 80px; border-radius: 20px;">
+                </div>
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('page_404') }}">🏠 Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="https://t.me/crytoxcom">💰 Deposit</a>
-                        
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('withdraw') }}">💸 Withdraw</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('page_404') }}">📜 Transactions</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('page_404') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="https://t.me/crytoxcom"><i class="bi bi-wallet2 me-2"></i> Deposit</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('withdraw') }}"><i class="bi bi-cash-coin me-2"></i> Withdraw</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('page_404') }}"><i class="bi bi-receipt me-2"></i> Transactions</a></li>
                 </ul>
             </div>
         </nav>
 
+        <!-- Toggle button for mobile -->
+        <div class="d-md-none p-2">
+            <button class="btn btn-outline-dark w-100 mb-3" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                <i class="bi bi-list me-1"></i> CENTER
+            </button>
+        </div>
+
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
-            <h2 class="mb-4" style="color: #1f1f1f;">Welcome, {{ username }}</h2>
+            <h2 class="mb-4 fw-bold text-dark">Welcome, {{ username }}</h2>
 
-            <!-- Wallet Balance Card -->
-            <div class="card mb-4 shadow-sm" style="border-radius: 15px; overflow: hidden;">
-                <div class="card-body text-center" 
-                     style="background: linear-gradient(135deg, #358a9f, #2f2f30); color: white;">
+            <!-- Wallet Balance -->
+            <div class="card mb-4 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-body text-center text-white" style="background: linear-gradient(135deg, #358a9f, #2f2f30);">
                     <div class="d-flex justify-content-center align-items-center mb-3">
                         <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 50%;">
                             <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
                         </div>
                     </div>
-                    <h5 class="card-title mb-1" style="font-weight: 300;">Wallet Balance</h5>
+                    <h5 class="fw-light mb-1">Wallet Balance</h5>
                     <h1 class="fw-bold">${{ balance }}</h1>
-                    <p class="mb-0" style="font-size: 14px; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 12px; border-radius: 10px;">
-                        Currency: <strong>{{ currency }}</strong>
-                    </p>
+                    <span class="badge bg-light text-dark px-3 py-2 mt-2">Currency: {{ currency }}</span>
                 </div>
             </div>
 
             <!-- Quick Actions -->
-            <div class="row mb-4">
-                <div class="col">
-                    <a href="{{ url_for('payment') }}" 
-                       class="btn w-100 text-white" 
-                       style="background-color: #358a9f;">Deposit</a>
+            <div class="row mb-4 g-2">
+                <div class="col-4">
+                    <a href="{{ url_for('payment') }}" class="btn btn-primary w-100"><i class="bi bi-wallet2 me-1"></i> Deposit</a>
                 </div>
-                <div class="col">
-                    <a href="{{ url_for('withdraw') }}" 
-                       class="btn w-100 text-white" 
-                       style="background-color: #3e3e3f;">Withdraw</a>
+                <div class="col-4">
+                    <a href="{{ url_for('withdraw') }}" class="btn btn-dark w-100"><i class="bi bi-cash-coin me-1"></i> Withdraw</a>
                 </div>
-                <div class="col">
-                    <a href="{{ url_for('page_404') }}" 
-                       class="btn w-100 text-white" 
-                       style="background-color: #1f1f1f;">Transfer</a>
+                <div class="col-4">
+                    <a href="{{ url_for('page_404') }}" class="btn btn-secondary w-100"><i class="bi bi-arrow-left-right me-1"></i> Transfer</a>
                 </div>
             </div>
 
             <!-- Spending Chart -->
-            <div class="card mb-4">
+            <div class="card mb-4 shadow-sm">
                 <div class="card-body">
-                    <h5 style="color: #2f2f30;">Spending Overview</h5>
+                    <h5 class="fw-semibold text-dark">Spending Overview</h5>
                     <canvas id="spendingChart" height="100"></canvas>
                 </div>
             </div>
 
-            <!-- Transaction Table -->
-            <div class="card">
+            <!-- Transactions -->
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 style="color: #2f2f30;">Recent Transactions</h5>
+                    <h5 class="fw-semibold text-dark">Recent Transactions</h5>
                     {% if transactions %}
-                    <table class="table mt-3" style="background-color: #d3e8f1; color: #1f1f1f;">
-                        <thead style="background-color: #358a9f; color: white;">
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for tx in transactions %}
-                            <tr>
-                                <td>{{ tx.date }}</td>
-                                <td>{{ tx.type }}</td>
-                                <td>${{ tx.amount }}</td>
-                                <td>{{ tx.status }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                        <div class="table-responsive">
+                            <table class="table mt-3 table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for tx in transactions %}
+                                    <tr>
+                                        <td>{{ tx.date }}</td>
+                                        <td>{{ tx.type }}</td>
+                                        <td>${{ tx.amount }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if tx.status == 'Completed' %} bg-success
+                                                {% elif tx.status == 'Pending' %} bg-warning text-dark
+                                                {% else %} bg-danger
+                                                {% endif %}">
+                                                {{ tx.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% else %}
-                    <p class="text-muted">No transactions found.</p>
+                        <p class="text-muted mt-3">No transactions found.</p>
                     {% endif %}
                 </div>
             </div>
