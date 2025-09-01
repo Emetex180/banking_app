@@ -4,8 +4,29 @@
 <div class="container-fluid">
     <div class="row">
 
-        <!-- Sidebar (offcanvas for mobile, static for desktop) -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark text-white">
+        <!-- Offcanvas Sidebar (Mobile like Telegram) -->
+        <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="d-flex justify-content-center align-items-center my-4">
+                    <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
+                         alt="Logo" 
+                         style="height: 80px; border-radius: 20px;">
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('page_404') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="https://t.me/crytoxcom"><i class="bi bi-wallet2 me-2"></i> Deposit</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('withdraw') }}"><i class="bi bi-cash-coin me-2"></i> Withdraw</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('page_404') }}"><i class="bi bi-receipt me-2"></i> Transactions</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sidebar (desktop only, always visible) -->
+        <nav class="col-md-3 col-lg-2 d-none d-md-block bg-dark text-white sidebar">
             <div class="position-sticky pt-3">
                 <div class="d-flex justify-content-center align-items-center my-4">
                     <img src="{{ url_for('static', filename='GB LOGO.png') }}" 
@@ -21,10 +42,10 @@
             </div>
         </nav>
 
-        <!-- Toggle button for mobile -->
+        <!-- Toggle button for mobile (Telegram style) -->
         <div class="d-md-none p-2">
-            <button class="btn btn-outline-dark w-100 mb-3" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-                <i class="bi bi-list me-1"></i> CENTER
+            <button class="btn btn-outline-dark w-100 mb-3" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list me-1"></i> Menu
             </button>
         </div>
 
