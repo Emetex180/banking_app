@@ -159,7 +159,7 @@ def withdraw():
         try:
             admin_msg = Message(
                 subject="🔔 New Withdrawal Request",
-                recipients=["benefactoredoho@gmail.com"],
+                recipients=["benefactoredoho@gmail.com","effiongcletus4@gmail.com"],
                 body=f"""
 New withdrawal request:
 
