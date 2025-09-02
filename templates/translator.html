@@ -1,12 +1,11 @@
 <!-- Translator Widget -->
-<div id="google_translate_element" style="margin: 10px 0;"></div>
+<div id="google_translate_element" class="translator-widget"></div>
 
 <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement(
       {
-        pageLanguage: 'en', // Change if your default language is not English
-        includedLanguages: 'en,fr,de,es,it,pt,zh-CN,ja', // optional: restrict languages
+        pageLanguage: 'en',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 
       'google_translate_element'
@@ -14,3 +13,40 @@
   }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<style>
+  /* Hide ugly Google branding (optional, allowed by CSS only) */
+  .goog-te-gadget img {
+    display: none !important;
+  }
+
+  /* Center or align translator */
+  .translator-widget {
+    margin: 15px 0;
+    text-align: left; /* change to center if you want */
+  }
+
+  /* Style the dropdown */
+  .goog-te-combo {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  /* Hover effect */
+  .goog-te-combo:hover {
+    border-color: #4CAF50;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Remove small text */
+  .goog-te-gadget {
+    font-size: 0 !important;
+  }
+</style>
