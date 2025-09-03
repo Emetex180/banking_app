@@ -1,52 +1,96 @@
-<!-- Translator Widget -->
-<div id="google_translate_element" class="translator-widget"></div>
+<!-- Custom Translator Widget -->
+<div class="translator-widget">
+  <input type="text" id="languageSearch" placeholder="Search language..." />
+  <ul id="languageList" class="language-list"></ul>
+</div>
 
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      {
-        pageLanguage: 'en',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 
-      'google_translate_element'
-    );
+<script>
+  // List of supported languages (Google Translate codes + names)
+  const languages = {
+    "af": "Afrikaans", "sq": "Albanian", "am": "Amharic", "ar": "Arabic",
+    "hy": "Armenian", "az": "Azerbaijani", "bn": "Bengali", "bg": "Bulgarian",
+    "ca": "Catalan", "zh-CN": "Chinese (Simplified)", "zh-TW": "Chinese (Traditional)",
+    "hr": "Croatian", "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English",
+    "et": "Estonian", "fi": "Finnish", "fr": "French", "de": "German", "el": "Greek",
+    "gu": "Gujarati", "he": "Hebrew", "hi": "Hindi", "hu": "Hungarian", "id": "Indonesian",
+    "ga": "Irish", "it": "Italian", "ja": "Japanese", "kn": "Kannada", "kk": "Kazakh",
+    "ko": "Korean", "lo": "Lao", "lv": "Latvian", "lt": "Lithuanian", "mk": "Macedonian",
+    "ms": "Malay", "ml": "Malayalam", "mt": "Maltese", "mr": "Marathi", "ne": "Nepali",
+    "no": "Norwegian", "fa": "Persian", "pl": "Polish", "pt": "Portuguese", "pa": "Punjabi",
+    "ro": "Romanian", "ru": "Russian", "sr": "Serbian", "si": "Sinhala", "sk": "Slovak",
+    "sl": "Slovenian", "es": "Spanish", "sw": "Swahili", "sv": "Swedish", "ta": "Tamil",
+    "te": "Telugu", "th": "Thai", "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu",
+    "vi": "Vietnamese", "cy": "Welsh", "xh": "Xhosa", "zu": "Zulu"
+  };
+
+  const searchInput = document.getElementById("languageSearch");
+  const languageList = document.getElementById("languageList");
+
+  // Populate language list
+  function showLanguages(filter = "") {
+    languageList.innerHTML = "";
+    Object.entries(languages).forEach(([code, name]) => {
+      if (name.toLowerCase().includes(filter.toLowerCase())) {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.dataset.code = code;
+        li.onclick = () => translatePage(code);
+        languageList.appendChild(li);
+      }
+    });
   }
+
+  // On input, filter the list
+  searchInput.addEventListener("input", (e) => {
+    showLanguages(e.target.value);
+  });
+
+  // Google Translate switcher
+  function translatePage(lang) {
+    const currentDomain = window.location.hostname;
+    const googleTranslateCookie = `googtrans=/en/${lang};path=/;domain=${currentDomain}`;
+    document.cookie = googleTranslateCookie;
+    location.reload(); // Refresh to apply translation
+  }
+
+  // Show all languages at first
+  showLanguages();
 </script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <style>
-  /* Hide ugly Google branding (optional, allowed by CSS only) */
-  .goog-te-gadget img {
-    display: none !important;
-  }
-
-  /* Center or align translator */
   .translator-widget {
     margin: 15px 0;
-    text-align: left; /* change to center if you want */
+    max-width: 300px;
+    font-family: "Poppins", sans-serif;
   }
 
-  /* Style the dropdown */
-  .goog-te-combo {
-    padding: 8px 12px;
+  #languageSearch {
+    width: 100%;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    background: #fff;
+    margin-bottom: 8px;
     font-size: 14px;
-    font-family: "Poppins", sans-serif;
-    color: #333;
+  }
+
+  .language-list {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .language-list li {
+    padding: 8px 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.2s;
   }
 
-  /* Hover effect */
-  .goog-te-combo:hover {
-    border-color: #4CAF50;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
-  }
-
-  /* Remove small text */
-  .goog-te-gadget {
-    font-size: 0 !important;
+  .language-list li:hover {
+    background: #f0f0f0;
   }
 </style>
