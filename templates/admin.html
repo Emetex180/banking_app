@@ -120,7 +120,7 @@
       <label for="send-user">Select User</label>
       <select name="user_id" id="send-user" required>
         {% for user in users %}
-          <option value="{{ user[0] }}">{{ user[1] }} (Balance: ${{ user[2] }})</option>
+          <option value="{{ user.id }}">{{ user.username }} (Balance: ${{ user.balance }})</option>
         {% endfor %}
       </select>
 
@@ -138,7 +138,7 @@
       <label for="withdraw-user">Select User</label>
       <select name="user_id" id="withdraw-user" required>
         {% for user in users %}
-          <option value="{{ user[0] }}">{{ user[1] }} (Balance: ${{ user[2] }})</option>
+          <option value="{{ user.id }}">{{ user.username }} (Balance: ${{ user.balance }})</option>
         {% endfor %}
       </select>
 
