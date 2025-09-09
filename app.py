@@ -1,21 +1,25 @@
 from flask import Flask, render_template, request, redirect, session, url_for
-import sqlite3
 from flask_mail import Mail, Message
+import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# ----------------- Database Path -----------------
-DB_PATH = "/tmp/database.db" if os.environ.get("RENDER") else "database.db"
+# ----------------- Database Config -----------------
+DATABASE_URL = os.environ.get("DATABASE_URL")  # Render provides this automatically
+
+def get_connection():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 # ----------------- Database Setup -----------------
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_connection()
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             first_name TEXT,
@@ -47,9 +51,9 @@ except Exception as e:
 
 # ----------------- Helper -----------------
 def get_user(username):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_connection()
     c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE username = ?', (username,))
+    c.execute('SELECT * FROM users WHERE username = %s', (username,))
     user = c.fetchone()
     conn.close()
     return user
@@ -87,7 +91,7 @@ def login():
             return redirect('/admin')
 
         user = get_user(username)
-        if user and user[2] == password:
+        if user and user['password'] == password:
             session['user'] = username
             return redirect('/dashboard')
         else:
@@ -116,12 +120,12 @@ def register():
             return 'Username "admin" is reserved.'
 
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = get_connection()
             c = conn.cursor()
             c.execute('''
                 INSERT INTO users 
                 (username, password, first_name, last_name, email, phone, address)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             ''', (username, password, first_name, last_name, email, phone, address))
             conn.commit()
             conn.close()
@@ -138,7 +142,7 @@ def dashboard():
         return redirect('/login')
 
     user = get_user(session['user'])
-    return render_template('dashboard.html', username=user[1], balance=user[8])
+    return render_template('dashboard.html', username=user['username'], balance=user['balance'])
 
 # ----------------- Withdraw -----------------
 @app.route('/withdraw', methods=["GET", "POST"])
@@ -159,7 +163,7 @@ def withdraw():
         try:
             admin_msg = Message(
                 subject="🔔 New Withdrawal Request",
-                recipients=["benefactoredoho@gmail.com","effiongcletus4@gmail.com"],
+                recipients=["benefactoredoho@gmail.com", "effiongcletus4@gmail.com"],
                 body=f"""
 New withdrawal request:
 
@@ -202,7 +206,7 @@ def admin():
     if session.get('user') != 'admin':
         return redirect('/login')
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_connection()
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -211,9 +215,9 @@ def admin():
         action = request.form['action']
 
         if action == "send":
-            c.execute('UPDATE users SET balance = balance + ? WHERE id = ?', (amount, user_id))
+            c.execute('UPDATE users SET balance = balance + %s WHERE id = %s', (amount, user_id))
         elif action == "withdraw":
-            c.execute('UPDATE users SET balance = balance - ? WHERE id = ?', (amount, user_id))
+            c.execute('UPDATE users SET balance = balance - %s WHERE id = %s', (amount, user_id))
 
         conn.commit()
 
@@ -230,3 +234,4 @@ def next():
 # ----------------- Run -----------------
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+        
